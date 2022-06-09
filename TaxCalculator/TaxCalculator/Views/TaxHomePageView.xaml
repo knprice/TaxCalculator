@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModelBase="clr-namespace:TaxCalculator.ViewModels.Base;assembly=TaxCalculator"
+             xmlns:util="clr-namespace:TaxCalculator.Utilities;assembly=TaxCalculator"
+             viewModelBase:ViewModelLocator.AutoWireViewModel="true" 
+             Title="{Binding Title}"
+             BackgroundColor="LightGray"             
+             x:Class="TaxCalculator.Views.TaxHomePageView">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <util:CurrencyConverter x:Key="currencyConverter" />
+            <util:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>    
+    <ContentPage.Content>
+
+        <ScrollView>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".2*"/>
+                    <ColumnDefinition Width=".6*"/>
+                    <ColumnDefinition Width=".2*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height=".1*"/>
+                    <RowDefinition Height=".9*"/>
+                </Grid.RowDefinitions>
+                <StackLayout Grid.Column="1" Grid.Row="0">
+                    <Label Text="Enter your US Zipcode" HorizontalOptions="Center" FontSize="Medium"/>                    
+                    <Entry Placeholder="Zip (ex: 90210)" Text="{Binding Zip}" HorizontalOptions="Center" Keyboard="Numeric" MaxLength="5"/>
+                    <Button Text="Search" Command="{Binding LoadLocationTaxCommand}" HorizontalOptions="Center"/>                    
+                </StackLayout>
+
+                <ActivityIndicator Grid.Row="1" Grid.ColumnSpan="3" VerticalOptions="Start" HorizontalOptions="Center" IsRunning="{Binding RetrievingData}" IsVisible="{Binding LocationLoaded, Converter={StaticResource InvertedBoolConverter}}"/>
+                <StackLayout Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" IsVisible="{Binding LocationLoaded}">
+                    <BoxView HeightRequest="1" Color="Black" BackgroundColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill" Grid.ColumnSpan="3"></BoxView>
+                    <Label Text="Local Tax Info" FontSize="Medium" HorizontalOptions="Center" TextDecorations="Underline"/>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Selected Location: " FontSize="Medium"/>
+                        <Label Text="{Binding Location}" FontAttributes="Italic" FontSize="Medium"/>                        
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal" >
+                        <Label Text="City Tax: " FontSize="Medium"/>
+                        <Label Text="{Binding CityTaxRate}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="County Tax: " FontSize="Medium"/>
+                        <Label Text="{Binding CountyTaxRate}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="State Tax: " FontSize="Medium"/>
+                        <Label Text="{Binding StateTaxRate}" FontSize="Medium"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Total Tax: " FontSize="Medium"/>
+                        <Label Text="{Binding TotalTaxRate}" FontSize="Medium"/>
+                    </StackLayout>
+                    <BoxView HeightRequest="1" Color="Black" BackgroundColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill" Grid.ColumnSpan="3"></BoxView>
+
+                    <Label Text="Calculate Local Tax" FontSize="Medium" HorizontalOptions="Center" TextDecorations="Underline"/>
+                    <StackLayout Orientation="Horizontal">
+                        <Label VerticalOptions="Center" Text="Subtotal:    " FontSize="Medium"/>
+                        <Entry Text="{Binding SubTotal, Converter={StaticResource currencyConverter}}" Keyboard="Numeric" FontSize="Medium" MinimumWidthRequest="150" WidthRequest="200" HorizontalOptions="StartAndExpand"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Ship From:" FontSize="Medium" VerticalOptions="Center" />
+                        <Picker Margin="4,0,0,0" Grid.Column="1" TitleColor="#696969" Title="Select State" ItemsSource="{Binding States}" WidthRequest="200" SelectedItem="{Binding ShippingFromState}" ></Picker>
+
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Shipping:" FontSize="Medium"/>
+                        <Label Text="{Binding Shipping}" FontSize="Medium" Margin="15,0,0,0"/>
+                        <Label Text="Change" TextColor="Blue" TextDecorations="Underline" VerticalOptions="Center" HorizontalOptions="End">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectShippingCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>                        
+                    </StackLayout>
+                    
+                    <Button Text="Calculate Tax + Shipping" Command="{Binding CalculateTaxCommand}" HorizontalOptions="Center"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center" BackgroundColor="#88b05a" IsVisible="{Binding TaxForOrderRetrieved}">
+                        <Label Text="Total Amount: " FontSize="Large" TextColor="White"/>
+                        <Label Text="{Binding Total, StringFormat='{0:C}'}" FontSize="Large" HorizontalOptions="StartAndExpand" TextColor="White"/>
+                    </StackLayout>
+                    <ActivityIndicator HorizontalOptions="Center" IsRunning="{Binding RetrievingData}" IsVisible="{Binding LocationLoaded}"/>
+
+            
+                </StackLayout>
+                
+
+
+            </Grid>
+            
+        </ScrollView>
+  </ContentPage.Content>
+</ContentPage>

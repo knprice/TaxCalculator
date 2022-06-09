@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TaxCalculator.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Pallete -->
+            <Color x:Key="JuniperGreen">#005e50</Color>
+            <Color x:Key="TitleTextColor">#FFFFFF</Color>
+            <!-- Pallete-end -->
+            <Style ApplyToDerivedTypes="true" TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Key=JuniperGreen}"/>
+                <Setter Property="BarTextColor" Value="{StaticResource Key=TitleTextColor}"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

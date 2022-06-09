@@ -10,21 +10,27 @@ namespace Unit_Testing
 {
     public class TaxServiceUnitTests
     {
+        private TinyIoCContainer _container;
+        private ITaxJarCalculatorService _taxJarService;
+        private ITaxService _taxService;
         [SetUp]
         public void Setup()
-        {           
-
+        {
+            _container = new TinyIoCContainer();
+            _container.Register<ITaxService, TaxService>();
+            //Registering Mock Service
+            _container.Register<ITaxJarCalculatorService, MockTaxJarService>();
+            _taxJarService = _container.Resolve<ITaxJarCalculatorService>();
+            _taxService = _container.Resolve<ITaxService>();
         }
         [Test(Description = "Sending '90210' to Tax Service and seeing if the Tax Service sends us back the human readable 10.25%")]
         public async Task GetCorrectTaxRateInPercentageFormat()
         {
-            //_container.
             var rateRequest = new TaxRateRequest
             {
                 PostalCode = "90210"
             };
-            var taxService = new TaxService(new MockTaxJarService());
-            var result = await taxService.GetTaxRateForLocation(rateRequest);
+            var result = await _taxService.GetTaxRateForLocation(rateRequest);
             Assert.AreEqual(result.Rate.CombinedRate, "10.25%");
         }
         [Test(Description = "Sending an order to TaxService for $33.33. Checking to see if it sends us the correct total + shipping and tax (41.75)")]
@@ -40,8 +46,7 @@ namespace Unit_Testing
                 Amount = 33.33M,
                 Shipping = 5
             };
-            var taxService = new TaxService(new MockTaxJarService());
-            var result = await taxService.GetTaxForOrder(orderRequest);
+            var result = await _taxService.GetTaxForOrder(orderRequest);
             Assert.AreEqual(result.TotalAmount, 41.75d);
         }
     }

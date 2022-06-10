@@ -8,7 +8,7 @@ namespace TaxCalculator.DataModels
 {
     public class TaxRateResponseDTO
     {
-        public RateDTO Rate { get; set; } = new RateDTO();
+        public RateDTO Rate { get; set; }
         public static TaxRateResponse MapFromDTO(TaxRateResponseDTO dto)
         {
             return new TaxRateResponse()

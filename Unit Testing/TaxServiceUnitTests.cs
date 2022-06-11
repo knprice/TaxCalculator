@@ -1,5 +1,7 @@
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TaxCalculator.Ioc;
 using TaxCalculator.Services;
@@ -29,9 +31,16 @@ namespace Unit_Testing
                 PostalCode = "90210"
             };
             var result = await _taxService.GetTaxRateForLocation(rateRequest);
-            //Oddly enough, When testing on a Mac, the return value is '10.25 %' with a space. On windows '10.25%' with no space is the return value.
-            //I've updated this test to work with Visual studio for Mac instead of windows.
-            Assert.AreEqual(result.Rate.CombinedRate, "10.25 %");
+
+            //Oddly enough, When testing on a Mac, the return value is '10.25 %' with a space. On Windows '10.25%' with no space is the return value.
+            //I've updated this test to work with Visual Studio for Mac as well as Windows.
+            if (result.Rate.CombinedRate.Any(x => Char.IsWhiteSpace(x)))
+            {
+                var str = result.Rate.CombinedRate;
+                result.Rate.CombinedRate = str.Substring(0, str.Length - 2) + str.Substring(str.Length - 1, 1);
+            }
+
+            Assert.AreEqual(result.Rate.CombinedRate, "10.25%");
         }
         [Test(Description = "Sending an order to TaxService for $33.33. Checking to see if it sends us the correct total + shipping and tax (41.75)")]
         public async Task GetCorrectTotalPlusTax()
